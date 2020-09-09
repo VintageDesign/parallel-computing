@@ -66,6 +66,7 @@ void sift_par(uint32_t n)
 
     init_sift(n);
 
+    #pragma omp parallel for num_threads(thread_count) default(none) shared(A) private(index)
     for(uint32_t index = 2; index < sqrt(n); index++)
     {
         if(A[index])
