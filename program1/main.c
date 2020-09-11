@@ -13,8 +13,8 @@ int main(int argc, char ** argv)
         exit(1);
     }
 
-    n = atoi(argv[1]);
-    //printf("%d\n", n );
+    n = atoll(argv[1]);
+    printf("%lld\n", n );
     
     //sift_par(n);
     //sift(n);
