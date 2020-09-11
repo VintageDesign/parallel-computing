@@ -1,10 +1,11 @@
 #include "sift.h"
+#include "darts.h"
 
 
 
 int main(int argc, char ** argv)
 {
-    uint32_t n = 0; 
+    long long int n = 0; 
 
     if(argc < 2 || argc > 2)
     {
@@ -13,10 +14,11 @@ int main(int argc, char ** argv)
     }
 
     n = atoi(argv[1]);
-    printf("%d\n", n );
+    //printf("%d\n", n );
     
-    sift_par(n);
-    sift(n);
+    //sift_par(n);
+    //sift(n);
 
+    darts(n);
     return 0;
 }

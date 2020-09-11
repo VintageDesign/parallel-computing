@@ -26,7 +26,7 @@ LFLAGS = -fopenmp
 LIBS = -lm
 
 # define the C source files
-SRCS = sift.c main.c
+SRCS = sift.c darts.c main.c
 
 # define the C object files 
 #
