@@ -24,7 +24,7 @@ uint32_t calculate_j_value(uint32_t index, uint32_t multiplier)
 void print_values(uint32_t n)
 {
     uint32_t total_count = 0;
-    uint32_t print_count = 0; 
+    uint32_t print_count = 0;
     for( uint32_t index = 2; index < n; index++)
     {
         if(A[index])
@@ -43,7 +43,7 @@ void print_values(uint32_t n)
     }
     printf("\n");
     printf("Total Primes: %d\n", total_count);
-    
+
 }
 
 void sift(uint32_t n)
@@ -62,7 +62,7 @@ void sift(uint32_t n)
         {
             for(uint32_t multiplier = 0; calculate_j_value(index, multiplier) < n; multiplier++)
             {
-                sifting_val = calculate_j_value(index, multiplier); 
+                sifting_val = calculate_j_value(index, multiplier);
                 A[sifting_val] = false;
             }
         }
@@ -95,7 +95,7 @@ void sift_par(uint32_t n)
         {
             for(uint32_t multiplier = 0; (index * index + index * multiplier) < n; multiplier++)
             {
-                sifting_val = (index * index + index * multiplier); 
+                sifting_val = (index * index + index * multiplier);
                 A[sifting_val] = false;
             }
         }
