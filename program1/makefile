@@ -39,7 +39,7 @@ SRCS = sieve/sift.c darts/darts.c main.c
 OBJS = $(SRCS:.c=.o)
 
 # define the executable file
-MAIN = program1
+MAIN = run_program_1
 
 #
 # The following part of the makefile is generic; it can be used to

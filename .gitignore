@@ -3,7 +3,7 @@
 *.orig
 *.rej
 
-program1
+run_program_1
 
 *~
 .#*
