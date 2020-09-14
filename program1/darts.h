@@ -12,7 +12,7 @@
 
 /**
  * @brief Approximates PI in parallel using the Monte Carlo process
- * 
+ *
  * @param n The number of darts to use
  */
 void darts(long long int n);

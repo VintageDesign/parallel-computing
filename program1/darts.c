@@ -7,7 +7,11 @@ void darts(long long int n)
     long long int        hit_count     = 0;
     float                x             = 0;
     float                y             = 0;
-    int                * random_array;
+    double               start_time    = 0;
+    double               end_time      = 0;
+
+    int                * random_array  = NULL;
+
 
     random_array = malloc(n * sizeof(int) + 1);
     printf("darts: %llu\n", n);
@@ -26,6 +30,7 @@ void darts(long long int n)
     }
 
     printf("Yeeting darts...\n");
+    start_time = omp_get_wtime();
     #pragma omp parallel for num_threads(omp_get_num_procs()) default(none) shared( n, random_array) private(x, y, index) schedule(guided) reduction(+:hit_count)
     for(index = 0; index < n; index++)
     {
@@ -37,8 +42,10 @@ void darts(long long int n)
         }
 
     }
+    end_time = omp_get_wtime();
 
     free(random_array);
     printf("Approximated Value: %lf\n", 4 * ((float)hit_count / (float) n));
 
+    printf("Time Taken: %f (s)\n", end_time - start_time);
 }
