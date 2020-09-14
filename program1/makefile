@@ -13,7 +13,7 @@ CFLAGS = -Wall -g
 
 # define any directories containing header files other than /usr/include
 #
-INCLUDES =
+INCLUDES = -Isieve -Idarts
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
@@ -26,7 +26,7 @@ LFLAGS = -fopenmp
 LIBS = -lm
 
 # define the C source files
-SRCS = sift.c darts.c main.c
+SRCS = sieve/sift.c darts/darts.c main.c
 
 # define the C object files
 #
