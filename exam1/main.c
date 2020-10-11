@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "floyd_s.h"
+#include "floyd_omp.h"
 #include "utils.h"
 
 typedef struct command_args {
@@ -54,6 +55,22 @@ int main(int argc, char ** argv)
         printf("Serial: ");
         copy_adj(adj_size, adj, &solution);
         floyd_serial(adj_size, &solution);
+        if (check_answer(adj_size, adj_answer, solution))
+        {
+            printf("Fail\n");
+        }
+        else
+        {
+            printf("Pass\n");
+        }
+
+    }
+
+    if(parsed_args.run_omp)
+    {
+        printf("OpenMP: ");
+        copy_adj(adj_size, adj, &solution);
+        floyd_omp(adj_size, &solution);
         if (check_answer(adj_size, adj_answer, solution))
         {
             printf("Fail\n");

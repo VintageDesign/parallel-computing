@@ -13,7 +13,7 @@ CFLAGS = -Wall -g
 
 # define any directories containing header files other than /usr/include
 #
-INCLUDES = -Iserial -I.
+INCLUDES = -Iserial -Iomp -I.
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
@@ -26,7 +26,7 @@ LFLAGS = -fopenmp
 LIBS = -lm
 
 # define the C source files
-SRCS = serial/floyd_s.c utils.c  main.c
+SRCS = omp/floyd_omp.c serial/floyd_s.c utils.c  main.c
 
 # define the C object files
 #
