@@ -6,6 +6,8 @@
 run_program_1
 run_exam_1
 
+*.swp
+
 
 *~
 .#*
