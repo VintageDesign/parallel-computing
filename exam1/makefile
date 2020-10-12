@@ -6,19 +6,19 @@
 #
 
 # define the C compiler to use
-CC = gcc
+CC = nvcc
 
 # define any compile-time flags
-CFLAGS = -Wall -g
+CFLAGS = -g 
 
 # define any directories containing header files other than /usr/include
 #
-INCLUDES = -Iserial -Iomp -I.
+INCLUDES = -Icuda -Iserial -Iomp -I.
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
-LFLAGS = -fopenmp
+LFLAGS = -Xcompiler " -openmp" 
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname
@@ -26,7 +26,7 @@ LFLAGS = -fopenmp
 LIBS = -lm
 
 # define the C source files
-SRCS = omp/floyd_omp.c serial/floyd_s.c utils.c  main.c
+SRCS = cuda/floyd_cuda.cu omp/floyd_omp.cu serial/floyd_s.cu utils.cu  main.cu
 
 # define the C object files
 #
@@ -53,7 +53,7 @@ all:    $(MAIN)
 
 
 $(MAIN): $(OBJS)
-		$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS)  $(LFLAGS) $(LIBS)
+		$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS)  $(LIBS)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of

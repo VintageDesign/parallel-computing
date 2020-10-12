@@ -3,10 +3,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <limits.h>
 
 #include "floyd_s.h"
+#include "floyd_cuda.h"
 #include "floyd_omp.h"
 #include "utils.h"
+
+#define INF 99999
 
 typedef struct command_args {
     bool run_serial;
@@ -18,17 +22,17 @@ typedef struct command_args {
 command_args_t parse_args(uint8_t argc, char ** argv);
 void print_usage(void);
 
-void parse_adj(FILE * file_handle_p, uint8_t * size, uint8_t *** adj, uint8_t *** adj_answer);
+void parse_adj(FILE * file_handle_p, int * size, int *** adj, int *** adj_answer);
 
 
 int main(int argc, char ** argv)
 {
     FILE * file_handle_p;
 
-    uint8_t ** adj        = NULL;
-    uint8_t ** adj_answer = NULL;
-    uint8_t ** solution   = NULL;
-    uint8_t    adj_size   = 0;
+    int ** adj        = NULL;
+    int ** adj_answer = NULL;
+    int ** solution   = NULL;
+    int    adj_size   = 0;
 
 
     command_args_t parsed_args = parse_args(argc, argv);
@@ -55,9 +59,15 @@ int main(int argc, char ** argv)
         printf("Serial: ");
         copy_adj(adj_size, adj, &solution);
         floyd_serial(adj_size, &solution);
-        if (check_answer(adj_size, adj_answer, solution))
+        if (!check_answer(adj_size, adj_answer, solution))
         {
             printf("Fail\n");
+            printf("Solution:\n");
+            print_matrix(adj_size, adj_answer);
+            printf("Calculated:\n");
+            print_matrix(adj_size, solution);
+            printf("Starting:\n");
+            print_matrix(adj_size, adj);
         }
         else
         {
@@ -71,7 +81,7 @@ int main(int argc, char ** argv)
         printf("OpenMP: ");
         copy_adj(adj_size, adj, &solution);
         floyd_omp(adj_size, &solution);
-        if (check_answer(adj_size, adj_answer, solution))
+        if (!check_answer(adj_size, adj_answer, solution))
         {
             printf("Fail\n");
         }
@@ -80,6 +90,27 @@ int main(int argc, char ** argv)
             printf("Pass\n");
         }
 
+    }
+
+    if(parsed_args.run_cuda)
+    {
+        printf("Cuda: ");
+        copy_adj(adj_size, adj, &solution);
+        floyd_cuda(adj_size, &solution);
+        if (!check_answer(adj_size, adj_answer, solution))
+        {
+            printf("Fail\n");
+            printf("Solution:\n");
+            print_matrix(adj_size, adj_answer);
+            printf("Calculated:\n");
+            print_matrix(adj_size, solution);
+            printf("Starting:\n");
+            print_matrix(adj_size, adj);
+        }
+        else
+        {
+            printf("Pass\n");
+        }
     }
    
 
@@ -155,25 +186,25 @@ void print_usage(void)
 
 
 void parse_adj( FILE     * file_handle_p
-        , uint8_t  *  size
-        , uint8_t *** adj
-        , uint8_t *** adj_answer)
+        , int  *  size
+        , int *** adj
+        , int *** adj_answer)
 {
     char      buffer[255];
     char    * token = NULL;
-    uint8_t   row   = 0;
-    uint8_t   col   = 0;
+    int   row   = 0;
+    int   col   = 0;
     
 
     fgets(buffer, 255, file_handle_p);
     *size = atoi(buffer);
 
-    (*adj)        = (uint8_t **) calloc(*size, sizeof(uint8_t *));
-    (*adj_answer) = (uint8_t **) calloc(*size, sizeof(uint8_t *));
-    for(uint8_t index = 0; index < *size; index++)
+    (*adj)        = (int **) calloc(*size, sizeof(int *));
+    (*adj_answer) = (int **) calloc(*size, sizeof(int *));
+    for(int index = 0; index < *size; index++)
     {
-        (*adj)[index]        = (uint8_t *) calloc(*size, sizeof(uint8_t));
-        (*adj_answer)[index] = (uint8_t *) calloc(*size, sizeof(uint8_t));
+        (*adj)[index]        = (int *) calloc(*size, sizeof(int));
+        (*adj_answer)[index] = (int *) calloc(*size, sizeof(int));
     }
 
 
@@ -183,9 +214,9 @@ void parse_adj( FILE     * file_handle_p
         token = strtok(buffer, " ");
         while(token != NULL)
         {
-            if(strcmp(token, "inf") == 0)
+            if(strcmp(token, "inf") == 0 || strcmp(token, "inf\n") == 0)
             {
-                (*adj)[row][col] = 255;
+                (*adj)[row][col] = INF;
             }
             else
             {
@@ -207,9 +238,9 @@ void parse_adj( FILE     * file_handle_p
         token = strtok(buffer, " ");
         while(token != NULL)
         {
-            if(strcmp(token, "inf") == 0)
+            if(strcmp(token, "inf") == 0 || strcmp(token, "inf\n") == 0)
             {
-                (*adj_answer)[row][col] = 255;
+                (*adj_answer)[row][col] = INF;
             }
             else
             {

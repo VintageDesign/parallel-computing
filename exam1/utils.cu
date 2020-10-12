@@ -1,16 +1,17 @@
 #include "utils.h"
 
-uint8_t minimum(uint8_t left, uint8_t right)
+int minimum(int left, int right)
 {
     return (left < right) ? left : right;
 }
 
-void copy_adj(const uint8_t size, uint8_t ** adj, uint8_t *** copy)
+
+void copy_adj(const int size, int ** adj, int *** copy)
 {
-    (*copy)        = (uint8_t **) calloc(size, sizeof(uint8_t *));
-    for(uint8_t index = 0; index < size; index++)
+    (*copy)        = (int **) calloc(size, sizeof(int *));
+    for(int index = 0; index < size; index++)
     {
-        (*copy)[index]        = (uint8_t *) calloc(size, sizeof(uint8_t));
+        (*copy)[index]        = (int *) calloc(size, sizeof(int));
     }
 
     for(int row = 0; row < size; row++)
@@ -24,7 +25,7 @@ void copy_adj(const uint8_t size, uint8_t ** adj, uint8_t *** copy)
 }
 
 
-bool check_answer(uint8_t size, uint8_t ** key, uint8_t ** attempt)
+bool check_answer(int size, int ** key, int ** attempt)
 {
     bool retval = true;
 
@@ -42,7 +43,7 @@ bool check_answer(uint8_t size, uint8_t ** key, uint8_t ** attempt)
     return retval;
 }
 
-void print_matrix(uint8_t size, uint8_t ** matrix)
+void print_matrix(int size, int ** matrix)
 {
     for(int row = 0; row < size; row++)
     {

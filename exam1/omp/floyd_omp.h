@@ -2,6 +2,6 @@
 #define FLOYD_OMP_H
 #include <stdint.h>
 
-void floyd_omp(uint8_t node_count, uint8_t *** adj_matrix);
+void floyd_omp(int node_count, int *** adj_matrix);
 
 #endif
