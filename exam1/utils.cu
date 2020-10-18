@@ -1,10 +1,5 @@
 #include "utils.h"
 
-int minimum(int left, int right)
-{
-    return (left < right) ? left : right;
-}
-
 
 void copy_adj(const int size, int ** adj, int *** copy)
 {

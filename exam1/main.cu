@@ -104,7 +104,7 @@ int main(int argc, char ** argv)
         printf("OpenMP: ");
         copy_adj(adj_size, adj, &solution);
         clock_gettime(CLOCK_MONOTONIC_RAW, &start);
-        floyd_omp(adj_size, &solution);
+        floyd_omp(adj_size, solution);
         clock_gettime(CLOCK_MONOTONIC_RAW, &end);
         if(!parsed_args.generate_random_graph)
         {
