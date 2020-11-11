@@ -36,7 +36,7 @@ void darts(long long int n)
     {
         x = random_array[index] / (float) RAND_MAX;
         y = random_array[index + 1 ] / (float) RAND_MAX;
-        if(x * x + y * y <= 1)
+        if(hypotf(x, y) <= 1)
         {
           hit_count += 1;
         }
