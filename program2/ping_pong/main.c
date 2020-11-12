@@ -5,12 +5,10 @@
 #include <sys/time.h>
 #include <time.h>
 
-//#define DEBUG
 
 int main(int argc, char * argv[])
 {
    int rec_count = atoi(argv[1]);
-   printf("%d\n", rec_count);
    int num_tasks = 0;
    int name_len = 0;
    int rank = 0;
@@ -23,6 +21,7 @@ int main(int argc, char * argv[])
 
    char message[10000];
    MPI_Status status;
+   MPI_Request request;
 
 
 
@@ -36,28 +35,36 @@ int main(int argc, char * argv[])
 
    if(rank == 0)
    {
-#ifdef DEBUG
-      printf("Local Name: %s\n", host_name);
-      printf("Remote name: %s\n", rec_host_name[1]);
-      printf("Sending Ping\n");
-#endif
       gettimeofday(&start, NULL);
-      MPI_Send(&message, rec_count, MPI_CHAR, 1, 1, MPI_COMM_WORLD);
-      MPI_Recv(&message, rec_count, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &status);
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Send(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD);
+         MPI_Recv(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &status);
+      }
       gettimeofday(&stop, NULL);
-#ifdef DEBUG
-      printf("Got Pong\n");
-      printf("Transmission took: %lu us\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-#else
       printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-#endif
+      gettimeofday(&start, NULL);
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Isend(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &request);
+         MPI_Irecv(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &request);
+      }
+      gettimeofday(&stop, NULL);
+      printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
 
    }
 
    else{
-
-      MPI_Recv(&message, rec_count, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
-      MPI_Send(&message, rec_count, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Recv(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
+         MPI_Send(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
+      }
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Irecv(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &request);
+         MPI_Isend(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &request);
+      }
    }
 
    MPI_Finalize();
