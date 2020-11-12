@@ -5,13 +5,24 @@
 #include <sys/time.h>
 #include <time.h>
 
+//#define DEBUG
+
 int main(int argc, char * argv[])
 {
+   int rec_count = atoi(argv[1]);
+   printf("%d\n", rec_count);
    int num_tasks = 0;
    int name_len = 0;
    int rank = 0;
+
+   struct timeval start;
+   struct timeval stop;
+
    char host_name[MPI_MAX_PROCESSOR_NAME];
    char rec_host_name[2][MPI_MAX_PROCESSOR_NAME];
+
+   char message[10000];
+   MPI_Status status;
 
 
 
@@ -25,9 +36,28 @@ int main(int argc, char * argv[])
 
    if(rank == 0)
    {
+#ifdef DEBUG
       printf("Local Name: %s\n", host_name);
       printf("Remote name: %s\n", rec_host_name[1]);
+      printf("Sending Ping\n");
+#endif
+      gettimeofday(&start, NULL);
+      MPI_Send(&message, rec_count, MPI_CHAR, 1, 1, MPI_COMM_WORLD);
+      MPI_Recv(&message, rec_count, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &status);
+      gettimeofday(&stop, NULL);
+#ifdef DEBUG
+      printf("Got Pong\n");
+      printf("Transmission took: %lu us\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+#else
+      printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+#endif
 
+   }
+
+   else{
+
+      MPI_Recv(&message, rec_count, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
+      MPI_Send(&message, rec_count, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
    }
 
    MPI_Finalize();
