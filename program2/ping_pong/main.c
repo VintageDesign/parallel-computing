@@ -35,6 +35,7 @@ int main(int argc, char * argv[])
 
    if(rank == 0)
    {
+      // Blocking
       gettimeofday(&start, NULL);
       for(int i = 0; i < rec_count; i++)
       {
@@ -43,11 +44,22 @@ int main(int argc, char * argv[])
       }
       gettimeofday(&stop, NULL);
       printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+
+      // Non Blocking
       gettimeofday(&start, NULL);
       for(int i = 0; i < rec_count; i++)
       {
          MPI_Isend(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &request);
          MPI_Irecv(&message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &request);
+      }
+      gettimeofday(&stop, NULL);
+      printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+
+      // Send/Recv
+      gettimeofday(&start, NULL);
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Sendrecv(&message, 1, MPI_CHAR, 1, 1, &message, 1, MPI_CHAR, 1, 1, MPI_COMM_WORLD, &status);
       }
       gettimeofday(&stop, NULL);
       printf("%lu\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
@@ -64,6 +76,10 @@ int main(int argc, char * argv[])
       {
          MPI_Irecv(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &request);
          MPI_Isend(&message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &request);
+      }
+      for(int i = 0; i < rec_count; i++)
+      {
+         MPI_Sendrecv(&message, 1, MPI_CHAR, 0, 1, &message, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
       }
    }
 
