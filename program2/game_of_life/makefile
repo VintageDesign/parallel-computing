@@ -6,7 +6,7 @@
 #
 
 # define the C compiler to use
-CC = gcc
+CC = mpicc
 
 # define any compile-time flags
 CFLAGS = -g
@@ -14,7 +14,7 @@ CFLAGS = -g
 # define any directories containing header files other than /usr/include
 #
 #INCLUDES = -Icuda -Iserial -Iomp -I.
-INCLUDES = -I. -Iserial
+INCLUDES = -I.
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
@@ -28,7 +28,7 @@ LFLAGS =
 LIBS = -lm
 
 # define the C source files
-SRCS = serial/serial.c  utils.c  main.c
+SRCS = utils.c  main.c
 
 # define the C object files
 #

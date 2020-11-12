@@ -40,7 +40,7 @@ SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 
 # define the executable file
-MAIN = ping_ping
+MAIN = ping_pong
 
 #
 # The following part of the makefile is generic; it can be used to

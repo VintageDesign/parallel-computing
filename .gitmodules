@@ -1,0 +1,3 @@
+[submodule "program2/ping_pong/machine-learning"]
+	path = program2/ping_pong/machine-learning
+	url = git@github.com:VintageDesign/machine-learning.git

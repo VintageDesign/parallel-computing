@@ -41,7 +41,7 @@ void print_board(int ** board, command_args_t config)
     {
         for(int col_index = 0; col_index < config.col_size; col_index++)
         {
-            character = (board[row_index][col_index] == 1) ? 'O' : ' ';
+            character = (board[row_index * col_index + 1] == 1) ? 'O' : ' ';
             printf("| %c ", character);
         }
         printf("|\n");
