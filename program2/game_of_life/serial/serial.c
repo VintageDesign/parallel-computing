@@ -21,14 +21,13 @@ int ** generate_game(command_args_t config){
 
 int ** run_game(int** board, command_args_t config)
 {
-    int sum = 0;
     int ** new_board = generate_board(config);
     for(int row_index = 0; row_index < config.row_size; row_index++)
     {
         for(int col_index = 0; col_index < config.col_size; col_index++)
         {
             // Cell Wise checking
-            sum = 0;
+            int sum = 0;
             for(int cell_row = row_index-1; cell_row <= row_index + 1; cell_row++)
             {
                 if(cell_row < config.row_size && cell_row >= 0)
