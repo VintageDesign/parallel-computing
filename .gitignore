@@ -7,6 +7,7 @@ run_program_1
 run_exam_1
 game_of_life
 ping_pong
+knn_classify
 
 *.swp
 

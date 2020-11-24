@@ -26,7 +26,9 @@ int main(int argc, char ** argv)
    {
       cmd_arguments_t args = parse_cmd_args(argc, argv);
 
+      printf("Parsing Dataset...\n");
       dataset_t data_set = parse_csv(args.csv_filename);
+      printf("Parsing Query...\n");
       dataset_t tmp = parse_csv(args.query_filename);
 
       int task_size = data_set.count / num_tasks;
@@ -76,10 +78,15 @@ int main(int argc, char ** argv)
 
    for( int point = 0; point < personal_dataset.count; point++)
    {
-      for(int i = 0; i < personal_dataset.feature_count - 1; i++)
+      for(int i = 0; i < query_size; i++)
       {
-
+        personal_dataset.data[point].distance +=
+           (personal_dataset.data[point].features[i] - query_features[i])
+         * (personal_dataset.data[point].features[i] - query_features[i]);
       }
+
+     personal_dataset.data[point].distance = sqrt(personal_dataset.data[point].distance);
+
    }
 
    // Odd Even sort in OMP

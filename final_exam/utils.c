@@ -23,6 +23,7 @@ cmd_arguments_t parse_cmd_args(int argc, char ** argv)
 
 dataset_t parse_csv(char * csv_filename)
 {
+   printf("Opening File\n");
    FILE * file_h = fopen((const char *) csv_filename, "r");
 
    printf("Counting Number of Lines\n");
@@ -60,6 +61,7 @@ dataset_t parse_csv(char * csv_filename)
       //printf("\n");
    }
 
+   printf("Closed File\n");
    fclose(file_h);
 
    return data_set;
