@@ -21,24 +21,30 @@ int main(int argc, char ** argv)
 
    MPI_Comm_size(MPI_COMM_WORLD, &num_tasks);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+   cmd_arguments_t args;
 
    if(rank == 0)
    {
-      cmd_arguments_t args = parse_cmd_args(argc, argv);
+      printf("Parsing Cmd Args...");
+      args = parse_cmd_args(argc, argv);
+      printf("Done!\n");
 
-      printf("Parsing Dataset...\n");
+
+      printf("Parsing dataset...");
       dataset_t data_set = parse_csv(args.csv_filename);
-      printf("Parsing Query...\n");
+      printf("Done!\n");
+      printf("Parsing query...");
       dataset_t tmp = parse_csv(args.query_filename);
+      printf("Done!\n");
 
       int task_size = data_set.count / num_tasks;
       int send_size = task_size;
       int rem = data_set.count % num_tasks;
 
+      printf("Partitioning Data...");
       for(int i = 0; i < num_tasks; i++)
       {
 
-         printf("Sending Data for task: %d\n", i);
          if( i == num_tasks - 1)
             send_size += rem; // Add the remainder of the data to the last task.
          send_partition(i, send_size, task_size, data_set);
@@ -46,6 +52,9 @@ int main(int argc, char ** argv)
          MPI_Send((const void *) tmp.data[0].features, tmp.feature_count, MPI_DOUBLE, i, 0, MPI_COMM_WORLD);
 
       }
+      printf("Done!\n");
+      printf("Calculating Norms...");
+
 
    }
 
@@ -126,6 +135,11 @@ int main(int argc, char ** argv)
       personal_dataset.data[i].classification = personal_dataset.data[i].features[personal_dataset.feature_count -1];
    }
    MPI_Barrier(MPI_COMM_WORLD);
+   if(rank == 0)
+   {
+      printf("Done!\n");
+      printf("Reducing...");
+   }
 
    // Reduce the data using a binary tree.
    int reduction = floor(num_tasks / 2);
@@ -159,7 +173,6 @@ int main(int argc, char ** argv)
                       , MPI_COMM_WORLD);
             }
          sent = 1;
-         printf("Rank %d Sent Reduction to %d\n", rank, rank - reduction);
       }
       else if(rank < reduction)
       {
@@ -188,12 +201,10 @@ int main(int argc, char ** argv)
                    , MPI_COMM_WORLD
                    , &status);
          }
-         printf("Rank %d Received Reduction\n", rank);
 
          combined.count = reduction_set.count + personal_dataset.count;
 
          combined.data = malloc(combined.count * sizeof(datapoint_t));
-         printf("Rank %d, Combined_size = %d\n", rank, combined.count);
 
          // Do the merge from mergesort
          int personal_index = 0;
@@ -216,7 +227,6 @@ int main(int argc, char ** argv)
                reduction_index += 1;
             }
             combined_index += 1;
-            printf("rank %d sorting...\n", rank);
 
          }
 
@@ -226,7 +236,6 @@ int main(int argc, char ** argv)
             combined.data[combined_index].classification = personal_dataset.data[personal_index].classification;
             personal_index += 1;
             combined_index += 1;
-            printf("rank %d sorting...\n", rank);
          }
          while(reduction_index < reduction_set.count)
          {
@@ -234,7 +243,6 @@ int main(int argc, char ** argv)
             combined.data[combined_index].classification = reduction_set.data[reduction_index].classification;
             reduction_index += 1;
             combined_index += 1;
-            printf("rank %d sorting...\n", rank);
          }
 
         /* personal_dataset.data = malloc(combined.count * sizeof(datapoint_t));
@@ -248,13 +256,33 @@ int main(int argc, char ** argv)
       }
       personal_dataset = combined;
       reduction = floor(reduction / 2);
-      if(rank == 0)
-      {
-         printf("Reduction Size: %d\n", reduction);
-      }
       MPI_Barrier(MPI_COMM_WORLD);
       round += 1;
 
+   }
+
+   if(rank == 0)
+   {
+      printf("Done!\n");
+      int classified = -1;
+      int count = 0;
+      int max_count = 0;
+      for(int i = 0; i < args.k; i++)
+      {
+         for(int j = 0; j < args.k; j++)
+         {
+            if(personal_dataset.data[i].classification == personal_dataset.data[j].classification)
+            {
+               count += 1;
+            }
+         }
+         if(count > max_count)
+         {
+            classified = (int) personal_dataset.data[i].classification;
+            max_count = count;
+         }
+      }
+      printf("Class: %d\n", classified);
    }
 
 

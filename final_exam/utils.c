@@ -23,15 +23,10 @@ cmd_arguments_t parse_cmd_args(int argc, char ** argv)
 
 dataset_t parse_csv(char * csv_filename)
 {
-   printf("Opening File\n");
    FILE * file_h = fopen((const char *) csv_filename, "r");
 
-   printf("Counting Number of Lines\n");
    int line_count = count_datapoints(file_h);
-   printf("Line Count: %d\n", line_count);
-   printf("Counting Line Size\n");
    int line_size = count_line_size(file_h);
-   printf("Line Size: %d\n", line_size);
 
    dataset_t data_set;
    data_set.data = malloc(line_count * sizeof(datapoint_t));
@@ -42,7 +37,6 @@ dataset_t parse_csv(char * csv_filename)
    {
       data_set.data[i].features = malloc(line_size * sizeof(double));
    }
-   printf("Allocated Memory...\n");
 
    char * line;
    size_t size;
@@ -61,7 +55,6 @@ dataset_t parse_csv(char * csv_filename)
       //printf("\n");
    }
 
-   printf("Closed File\n");
    fclose(file_h);
 
    return data_set;
