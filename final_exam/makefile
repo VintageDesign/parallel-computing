@@ -54,7 +54,7 @@ all:    $(MAIN)
 
 
 $(MAIN): $(OBJS)
-		$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS)  $(LIBS)
+		$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS)  $(LIBS)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of

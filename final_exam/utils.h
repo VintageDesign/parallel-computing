@@ -18,6 +18,7 @@ typedef struct datapoint
 {
    double * features;
    double distance;
+   double classification;
 } datapoint_t;
 
 typedef struct dataset
