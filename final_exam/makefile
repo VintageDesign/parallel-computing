@@ -19,7 +19,7 @@ INCLUDES = -I. -Iomp
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
 #LFLAGS = -Xcompiler " -openmp"
-LFLAGS =
+LFLAGS = -fopenmp
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname

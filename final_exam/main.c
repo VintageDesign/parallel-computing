@@ -76,13 +76,17 @@ int main(int argc, char ** argv)
    MPI_Recv(query_features, query_size, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD, &status);
 
 
+
+#pragma omp paralllel for num_threads(omp_get_num_procs()) default(none)
    for( int point = 0; point < personal_dataset.count; point++)
    {
+
+      personal_dataset.data[point].distance = 0;
       for(int i = 0; i < query_size; i++)
       {
         personal_dataset.data[point].distance +=
-           (personal_dataset.data[point].features[i] - query_features[i])
-         * (personal_dataset.data[point].features[i] - query_features[i]);
+         ((personal_dataset.data[point].features[i] - query_features[i])
+         * (personal_dataset.data[point].features[i] - query_features[i]));
       }
 
      personal_dataset.data[point].distance = sqrt(personal_dataset.data[point].distance);
