@@ -137,32 +137,6 @@ int main(int argc, char ** argv)
    {
       if(rank >= reduction && sent == 0)
       {
-         if(round > 0)
-         {
-            MPI_Send(&combined.count
-                   , 1
-                   , MPI_INT
-                   , rank - reduction
-                   , 0
-                   , MPI_COMM_WORLD);
-            for(int i = 0; i < combined.count; i++)
-            {
-               MPI_Send(&combined.data[i].distance
-                      , 1
-                      , MPI_DOUBLE
-                      , rank - reduction
-                      , 0
-                      , MPI_COMM_WORLD);
-               MPI_Send(&combined.data[i].classification
-                      , 1
-                      , MPI_DOUBLE
-                      , rank - reduction
-                      , 0
-                      , MPI_COMM_WORLD);
-            }
-         }
-         else
-         {
             MPI_Send(&personal_dataset.count
                    , 1
                    , MPI_INT
@@ -177,14 +151,13 @@ int main(int argc, char ** argv)
                       , rank - reduction
                       , 0
                       , MPI_COMM_WORLD);
-               MPI_Send(&personal_dataset.data[i].features[personal_dataset.feature_count -1]
+               MPI_Send(&personal_dataset.data[i].classification
                       , 1
                       , MPI_DOUBLE
                       , rank - reduction
                       , 0
                       , MPI_COMM_WORLD);
             }
-         }
          sent = 1;
          printf("Rank %d Sent Reduction to %d\n", rank, rank - reduction);
       }
@@ -273,6 +246,7 @@ int main(int argc, char ** argv)
          personal_dataset.count = combined.count;
          */
       }
+      personal_dataset = combined;
       reduction = floor(reduction / 2);
       if(rank == 0)
       {
